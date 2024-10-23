@@ -1,7 +1,7 @@
-package com.example.streaming.service;
+package com.example.streaming.controller.port;
 
 import com.example.streaming.domain.ContentPost;
-import com.example.streaming.dto.ContentPostCreate;
+import com.example.streaming.controller.request.ContentPostCreate;
 
 public interface ContentPostService {
 

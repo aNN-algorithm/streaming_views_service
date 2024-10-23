@@ -1,6 +1,5 @@
-package com.example.streaming.repository;
+package com.example.streaming.infrastructure;
 
-import com.example.streaming.domain.ContentPostEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ContentPostJpaRepository extends JpaRepository<ContentPostEntity, Long> {

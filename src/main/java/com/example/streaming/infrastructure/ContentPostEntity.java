@@ -1,5 +1,6 @@
-package com.example.streaming.domain;
+package com.example.streaming.infrastructure;
 
+import com.example.streaming.domain.ContentPost;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
