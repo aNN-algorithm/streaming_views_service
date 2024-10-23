@@ -28,7 +28,6 @@ public class ContentPostTest {
         assertThat(contentPost.getTotalViews()).isEqualTo(0L);
         assertThat(contentPost.getTotalAdViews()).isEqualTo(0L);
         assertThat(contentPost.getTotalPlayTime()).isEqualTo(0L);
-        //assertThat(contentPost.getCreatedAt()).isEqualTo();
         assertThat(contentPost.isPublic()).isEqualTo(true);
         assertThat(contentPost.isDeleted()).isEqualTo(false);
         assertThat(contentPost.getDeletedAt()).isNull();
