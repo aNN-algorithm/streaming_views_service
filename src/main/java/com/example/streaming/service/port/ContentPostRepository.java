@@ -1,4 +1,4 @@
-package com.example.streaming.repository;
+package com.example.streaming.service.port;
 
 import com.example.streaming.domain.ContentPost;
 

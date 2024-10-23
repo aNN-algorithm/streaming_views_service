@@ -1,9 +1,7 @@
-package com.example.streaming.repository.impl;
+package com.example.streaming.infrastructure;
 
 import com.example.streaming.domain.ContentPost;
-import com.example.streaming.domain.ContentPostEntity;
-import com.example.streaming.repository.ContentPostJpaRepository;
-import com.example.streaming.repository.ContentPostRepository;
+import com.example.streaming.service.port.ContentPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.example.streaming.domain;
 
-import com.example.streaming.dto.ContentPostCreate;
+import com.example.streaming.controller.request.ContentPostCreate;
 import lombok.Builder;
 import lombok.Getter;
 

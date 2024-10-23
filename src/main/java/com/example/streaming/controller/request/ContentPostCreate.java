@@ -1,4 +1,4 @@
-package com.example.streaming.dto;
+package com.example.streaming.controller.request;
 
 import lombok.Builder;
 import lombok.Getter;
