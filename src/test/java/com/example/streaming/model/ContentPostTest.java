@@ -1,5 +1,7 @@
 package com.example.streaming.model;
 
+import com.example.streaming.contentPost.model.ContentPost;
+import com.example.streaming.contentPost.model.ContentPostCreate;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;

@@ -1,4 +1,4 @@
-package com.example.streaming.model;
+package com.example.streaming.contentPost.model;
 
 import lombok.Builder;
 import lombok.Getter;
