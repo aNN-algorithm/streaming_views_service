@@ -1,8 +1,8 @@
 package com.example.streaming.service;
 
 import com.example.mock.FakeContentPostRepository;
-import com.example.streaming.domain.ContentPost;
-import com.example.streaming.controller.request.ContentPostCreate;
+import com.example.streaming.model.ContentPost;
+import com.example.streaming.model.ContentPostCreate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

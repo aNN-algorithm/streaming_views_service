@@ -1,9 +1,8 @@
 package com.example.streaming.service;
 
-import com.example.streaming.domain.ContentPost;
-import com.example.streaming.service.port.ContentPostRepository;
-import com.example.streaming.controller.port.ContentPostService;
-import com.example.streaming.controller.request.ContentPostCreate;
+import com.example.streaming.model.ContentPost;
+import com.example.streaming.repository.ContentPostRepository;
+import com.example.streaming.model.ContentPostCreate;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

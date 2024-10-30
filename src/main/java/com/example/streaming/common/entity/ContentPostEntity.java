@@ -1,6 +1,6 @@
-package com.example.streaming.infrastructure;
+package com.example.streaming.common.entity;
 
-import com.example.streaming.domain.ContentPost;
+import com.example.streaming.model.ContentPost;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 

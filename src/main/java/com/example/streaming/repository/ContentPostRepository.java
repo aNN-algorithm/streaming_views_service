@@ -1,6 +1,6 @@
-package com.example.streaming.service.port;
+package com.example.streaming.repository;
 
-import com.example.streaming.domain.ContentPost;
+import com.example.streaming.model.ContentPost;
 
 public interface ContentPostRepository {
 
