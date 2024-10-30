@@ -1,5 +1,6 @@
 package com.example.streaming.watchContent.controller;
 
+import com.example.streaming.watchContent.model.UserViewLog;
 import com.example.streaming.watchContent.model.UserViewLogCreate;
 import com.example.streaming.watchContent.service.WatchContentService;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,17 @@ public class WatchContentController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(Map.of("status", HttpStatus.OK.value(), "lastPlayedAt", lastPlayedAt));
+    }
+
+    @PostMapping("/{contentPostId}") // 시청을 시작한 시간, 끝낸 시간, 그리고 마지막으로 시청한 시점을 저장하는 END POINT
+    public ResponseEntity<?> createLog(@PathVariable Long contentPostId,
+                                       @RequestBody UserViewLogCreate userViewLogCreate) {
+        Long userId = 1L;
+
+        // 어뷰징 판단
+
+        watchContentService.createLog(UserViewLog.create(userId, contentPostId, userViewLogCreate));
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

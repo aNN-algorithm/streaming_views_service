@@ -1,12 +1,15 @@
 package com.example.streaming.watchContent.service;
 
+import com.example.streaming.watchContent.model.UserViewLog;
 import com.example.streaming.watchContent.repository.WatchContentRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@Builder
 @RequiredArgsConstructor
 public class WatchContentServiceImpl implements WatchContentService {
 
@@ -29,5 +32,12 @@ public class WatchContentServiceImpl implements WatchContentService {
         }
 
         return lastPlayedAt;
+    }
+
+    @Override
+    public void createLog(UserViewLog userViewLog) {
+
+        // 로그를 레포지토리에 저장
+        watchContentRepository.save(userViewLog);
     }
 }

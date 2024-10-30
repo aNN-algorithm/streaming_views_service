@@ -34,7 +34,7 @@ public class WatchCacheServiceTest {
     }
 
     @Test
-    public void testGetLastPlayedAt() {
+    public void 캐시에서_마지막_시청_지점을_가져오기() {
         // given
         Long userId = 1L;
         Long contentPostId = 101L;
@@ -51,7 +51,7 @@ public class WatchCacheServiceTest {
     }
 
     @Test
-    public void testUpdateLastPlayedAt() {
+    public void 캐시에_마지막_시청_지점을_저장하기() {
         // given
         Long userId = 1L;
         Long contentPostId = 101L;

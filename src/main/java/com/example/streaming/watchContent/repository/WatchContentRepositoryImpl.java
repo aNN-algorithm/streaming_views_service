@@ -1,6 +1,7 @@
 package com.example.streaming.watchContent.repository;
 
 import com.example.streaming.common.entity.UserViewLogEntity;
+import com.example.streaming.watchContent.model.UserViewLog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -21,5 +22,11 @@ public class WatchContentRepositoryImpl implements WatchContentRepository {
         Long lastPlayedAt2 = watchContentJpaRepository.findLastPlayedAtByUserIdAndContentPostId(userId, contentPostId).orElse(0L);
 
         return lastPlayedAt1;
+    }
+
+    @Override
+    public void save(UserViewLog userViewLog) {
+
+        watchContentJpaRepository.save(UserViewLogEntity.from(userViewLog));
     }
 }
