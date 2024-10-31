@@ -1,4 +1,4 @@
-package com.example.mock;
+package com.example.mock.mockRepository;
 
 import com.example.streaming.contentPost.model.ContentPost;
 import com.example.streaming.contentPost.repository.ContentPostRepository;

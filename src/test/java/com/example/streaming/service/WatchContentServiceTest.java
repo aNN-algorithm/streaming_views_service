@@ -1,6 +1,6 @@
 package com.example.streaming.service;
 
-import com.example.mock.FakeWatchContentRepository;
+import com.example.mock.mockRepository.FakeWatchContentRepository;
 import com.example.streaming.watchContent.model.UserViewLog;
 import com.example.streaming.watchContent.model.UserViewLogCreate;
 import com.example.streaming.watchContent.service.WatchContentServiceImpl;

@@ -1,6 +1,6 @@
 package com.example.streaming.service;
 
-import com.example.mock.FakeContentPostRepository;
+import com.example.mock.mockRepository.FakeContentPostRepository;
 import com.example.streaming.contentPost.model.ContentPost;
 import com.example.streaming.contentPost.model.ContentPostCreate;
 import com.example.streaming.contentPost.service.ContentPostServiceImpl;

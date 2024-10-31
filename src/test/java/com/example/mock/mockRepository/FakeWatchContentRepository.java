@@ -1,4 +1,4 @@
-package com.example.mock;
+package com.example.mock.mockRepository;
 
 import com.example.streaming.watchContent.model.UserViewLog;
 import com.example.streaming.watchContent.repository.WatchContentRepository;
