@@ -2,6 +2,7 @@ package com.example.streaming.watchContent.controller;
 
 import com.example.streaming.watchContent.model.UserViewLog;
 import com.example.streaming.watchContent.model.UserViewLogCreate;
+import com.example.streaming.watchContent.service.WatchCacheService;
 import com.example.streaming.watchContent.service.WatchContentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class WatchContentController {
 
     private final WatchContentService watchContentService;
+    private final WatchCacheService watchCacheService;
 
     @GetMapping("/lastPlayedAt/{contentPostId}") // Redis 나 DB 에서 마지막으로 시청한 시점을 가져오는 END POINT
     public ResponseEntity<?> getLastPlayedAt(@PathVariable Long contentPostId) {
@@ -33,9 +35,10 @@ public class WatchContentController {
                                        @RequestBody UserViewLogCreate userViewLogCreate) {
         Long userId = 1L;
 
-        // 어뷰징 판단
-
-        watchContentService.createLog(UserViewLog.create(userId, contentPostId, userViewLogCreate));
+        UserViewLog userViewLog = UserViewLog.create(userId, contentPostId, userViewLogCreate);
+        watchCacheService.updatePostView(userViewLog);
+        watchContentService.createLog(userViewLog);
+        watchCacheService.cacheAbuseDetectionData(userId, contentPostId);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
