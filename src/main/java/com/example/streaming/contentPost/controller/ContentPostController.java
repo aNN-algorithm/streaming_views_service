@@ -1,7 +1,7 @@
-package com.example.streaming.controller;
+package com.example.streaming.contentPost.controller;
 
-import com.example.streaming.controller.port.ContentPostService;
-import com.example.streaming.controller.request.ContentPostCreate;
+import com.example.streaming.contentPost.service.ContentPostService;
+import com.example.streaming.contentPost.model.ContentPostCreate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

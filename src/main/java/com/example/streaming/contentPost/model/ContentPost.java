@@ -1,6 +1,5 @@
-package com.example.streaming.domain;
+package com.example.streaming.contentPost.model;
 
-import com.example.streaming.controller.request.ContentPostCreate;
 import lombok.Builder;
 import lombok.Getter;
 

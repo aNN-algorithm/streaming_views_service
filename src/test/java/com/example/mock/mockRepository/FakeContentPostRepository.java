@@ -1,7 +1,7 @@
-package com.example.mock;
+package com.example.mock.mockRepository;
 
-import com.example.streaming.domain.ContentPost;
-import com.example.streaming.service.port.ContentPostRepository;
+import com.example.streaming.contentPost.model.ContentPost;
+import com.example.streaming.contentPost.repository.ContentPostRepository;
 
 import java.util.ArrayList;
 import java.util.List;
