@@ -3,6 +3,7 @@ package com.example.streaming.watchContent.service;
 import com.example.streaming.watchContent.model.UserViewLog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class WatchCacheServiceImpl implements WatchCacheService {
 
     private static final long TTL_DURATION = 3600; // 예시: 1시간 (3600초)
@@ -20,6 +20,10 @@ public class WatchCacheServiceImpl implements WatchCacheService {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final RedisTemplate<String, Object> redisTemplate;
+
+    public WatchCacheServiceImpl(@Qualifier("redisTemplateToCalculateViews") RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     @Override
     public Long getLastPlayedAt(Long userId, Long contentPostId) {
