@@ -40,7 +40,7 @@ public class RedisConfig {
         return template;
     }
 
-    @Bean
+    @Bean(name = "redisTemplateContentPostId")
     public RedisTemplate<String, Object> redisTemplateContentPostId(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
@@ -50,8 +50,9 @@ public class RedisConfig {
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
 
+        // 값을 Long 타입으로 직렬화/역직렬화 설정
         template.setValueSerializer(new Jackson2JsonRedisSerializer<>(Long.class));
-        template.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
+        template.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(Long.class));
 
         return template;
     }
