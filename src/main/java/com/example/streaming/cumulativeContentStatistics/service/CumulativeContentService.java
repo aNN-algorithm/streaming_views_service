@@ -1,4 +1,8 @@
 package com.example.streaming.cumulativeContentStatistics.service;
 
-public class CumulativeContentService {
+import com.example.streaming.cumulativeContentStatistics.model.CumulativeContentStatistics;
+
+public interface CumulativeContentService {
+
+    CumulativeContentStatistics create(Long contentPostId);
 }

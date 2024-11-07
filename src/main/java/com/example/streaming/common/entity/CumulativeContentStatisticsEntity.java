@@ -1,5 +1,6 @@
 package com.example.streaming.common.entity;
 
+import com.example.streaming.cumulativeContentStatistics.model.CumulativeContentStatistics;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -32,4 +33,30 @@ public class CumulativeContentStatisticsEntity {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    public static CumulativeContentStatisticsEntity from(CumulativeContentStatistics cumulativeContentStatistics) {
+        CumulativeContentStatisticsEntity cumulativeContentStatisticsEntity = new CumulativeContentStatisticsEntity();
+        cumulativeContentStatisticsEntity.id = cumulativeContentStatistics.getId();
+        cumulativeContentStatisticsEntity.contentPostId = cumulativeContentStatistics.getContentPostId();
+        cumulativeContentStatisticsEntity.cumulativeViews = cumulativeContentStatistics.getCumulativeViews();
+        cumulativeContentStatisticsEntity.cumulativeAdViews = cumulativeContentStatistics.getCumulativeAdViews();
+        cumulativeContentStatisticsEntity.cumulativeRevenue = cumulativeContentStatistics.getCumulativeRevenue();
+        cumulativeContentStatisticsEntity.cumulativeAdRevenue = cumulativeContentStatistics.getCumulativeAdRevenue();
+        cumulativeContentStatisticsEntity.cumulativePlaybackTime = cumulativeContentStatistics.getCumulativePlaybackTime();
+        cumulativeContentStatisticsEntity.updatedAt = LocalDateTime.now();
+        return cumulativeContentStatisticsEntity;
+    }
+
+    public CumulativeContentStatistics toModel() {
+        return CumulativeContentStatistics.builder()
+                .id(id)
+                .contentPostId(contentPostId)
+                .cumulativeViews(cumulativeViews)
+                .cumulativeAdViews(cumulativeAdViews)
+                .cumulativeRevenue(cumulativeRevenue)
+                .cumulativeAdRevenue(cumulativeAdRevenue)
+                .cumulativePlaybackTime(cumulativePlaybackTime)
+                .updatedAt(updatedAt)
+                .build();
+    }
 }

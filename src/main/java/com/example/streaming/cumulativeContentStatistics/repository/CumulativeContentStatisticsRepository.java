@@ -1,4 +1,8 @@
 package com.example.streaming.cumulativeContentStatistics.repository;
 
-public class CumulativeContentStatisticsRepository {
+import com.example.streaming.cumulativeContentStatistics.model.CumulativeContentStatistics;
+
+public interface CumulativeContentStatisticsRepository {
+
+    CumulativeContentStatistics save(CumulativeContentStatistics cumulativeContentStatistics);
 }
