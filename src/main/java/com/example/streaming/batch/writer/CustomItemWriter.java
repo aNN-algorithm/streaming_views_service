@@ -1,4 +1,4 @@
-package com.example.streaming.batch.write;
+package com.example.streaming.batch.writer;
 
 import com.example.streaming.common.entity.UserViewLogEntity;
 import lombok.extern.slf4j.Slf4j;
