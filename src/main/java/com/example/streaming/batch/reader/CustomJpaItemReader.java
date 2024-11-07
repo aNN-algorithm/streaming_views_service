@@ -1,4 +1,4 @@
-package com.example.streaming.batch.read;
+package com.example.streaming.batch.reader;
 
 import com.example.streaming.common.entity.UserViewLogEntity;
 import jakarta.persistence.EntityManagerFactory;

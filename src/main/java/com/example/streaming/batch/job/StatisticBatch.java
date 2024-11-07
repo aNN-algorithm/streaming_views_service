@@ -1,8 +1,8 @@
 package com.example.streaming.batch.job;
 
 import com.example.streaming.batch.processor.CustomItemProcessor;
-import com.example.streaming.batch.read.CustomJpaItemReader;
-import com.example.streaming.batch.write.CustomItemWriter;
+import com.example.streaming.batch.reader.CustomJpaItemReader;
+import com.example.streaming.batch.writer.CustomItemWriter;
 import com.example.streaming.common.entity.DailyContentStatisticsEntity;
 import com.example.streaming.common.entity.UserViewLogEntity;
 import lombok.extern.slf4j.Slf4j;
