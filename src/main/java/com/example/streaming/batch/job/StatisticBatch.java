@@ -1,10 +1,11 @@
 package com.example.streaming.batch.job;
 
-import com.example.streaming.batch.processor.CustomItemProcessor;
 import com.example.streaming.batch.reader.CustomJpaItemReader;
 import com.example.streaming.batch.writer.CustomItemWriter;
+import com.example.streaming.common.entity.CumulativeContentStatisticsEntity;
 import com.example.streaming.common.entity.DailyContentStatisticsEntity;
 import com.example.streaming.common.entity.UserViewLogEntity;
+import com.example.streaming.dailyContentStatistics.model.DailyContentStatistics;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -24,15 +25,20 @@ public class StatisticBatch {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final CustomJpaItemReader customJpaItemReader;
+    private final ItemProcessor<CumulativeContentStatisticsEntity, DailyContentStatistics> itemProcessor;
+    private final ItemWriter<DailyContentStatistics> itemWriter;
 
     public StatisticBatch(JobRepository jobRepository,
                           PlatformTransactionManager platformTransactionManager,
-                          CustomJpaItemReader customJpaItemReader
-
+                          CustomJpaItemReader customJpaItemReader,
+                          ItemProcessor<CumulativeContentStatisticsEntity, DailyContentStatistics> itemProcessor,
+                          ItemWriter<DailyContentStatistics> itemWriter
     ) {
         this.jobRepository = jobRepository;
         this.platformTransactionManager = platformTransactionManager;
         this.customJpaItemReader = customJpaItemReader;
+        this.itemProcessor = itemProcessor;
+        this.itemWriter = itemWriter;
     }
 
     @Bean
@@ -49,12 +55,15 @@ public class StatisticBatch {
     public Step dailyViewsStep() {
         log.info("create step : DailyViewsStep");
 
-        JpaPagingItemReader<UserViewLogEntity> reader = customJpaItemReader.createJpaPagingItemReader();
+        //JpaPagingItemReader<UserViewLogEntity> reader = customJpaItemReader.createJpaPagingItemReader();
+        JpaPagingItemReader<CumulativeContentStatisticsEntity> reader = customJpaItemReader.createJpaPagingItemReader();
 
         return new StepBuilder("DailyViewsStep", jobRepository)
-                .chunk(3, platformTransactionManager)
+                //.<UserViewLogEntity, DailyContentStatisticsEntity>chunk(3, platformTransactionManager)
+                .<CumulativeContentStatisticsEntity, DailyContentStatistics>chunk(3, platformTransactionManager)
                 .reader(reader)
-                .writer(itemWriter())
+                .processor(itemProcessor)
+                .writer(itemWriter)
                 .listener(new ItemReadListener<UserViewLogEntity>() {
                     @Override
                     public void beforeRead() {
@@ -95,16 +104,16 @@ public class StatisticBatch {
 //        return new CustomItemReader1();
 //    }
 
-    @Bean
-    public ItemProcessor<Long, DailyContentStatisticsEntity> itemProcessor() {
-        log.info("create itemProcessor");
-        return new CustomItemProcessor();
-    }
+//    @Bean
+//    //public ItemProcessor<UserViewLogEntity, DailyContentStatisticsEntity> itemProcessor() {
+//    public ItemProcessor<CumulativeContentStatisticsEntity, DailyContentStatisticsEntity> itemProcessor() {
+//        log.info("create itemProcessor");
+//        return new CustomItemProcessor();
+//    }
 
-    @Bean
-    public ItemWriter<? super Object> itemWriter() {
-        log.info("create itemWriter and new CustomItemWriter");
-        return new CustomItemWriter();
-    }
-
+//    @Bean
+//    public ItemWriter<DailyContentStatistics> itemWriter() {
+//        log.info("create itemWriter");
+//        return new CustomItemWriter();
+//    }
 }

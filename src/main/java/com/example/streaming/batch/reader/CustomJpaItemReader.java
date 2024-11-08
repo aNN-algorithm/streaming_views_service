@@ -1,5 +1,6 @@
 package com.example.streaming.batch.reader;
 
+import com.example.streaming.common.entity.CumulativeContentStatisticsEntity;
 import com.example.streaming.common.entity.UserViewLogEntity;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -34,12 +35,12 @@ public class CustomJpaItemReader {
         this.entityManagerFactory = entityManagerFactory;
     }
 
-    public JpaPagingItemReader<UserViewLogEntity> createJpaPagingItemReader() {
+    public JpaPagingItemReader<CumulativeContentStatisticsEntity> createJpaPagingItemReader() {
 
         log.info("JpaPagingItemReader createJpaPagingItemReader");
 
-        LocalDateTime date = LocalDateTime.now();
-        //String key = "DailyView:" + LocalDateTime.now().minusDays(1).format(DATE_FORMATTER);
+        LocalDateTime date = LocalDateTime.now().minusDays(1);
+        //String key = "DailyView:" + date.format(DATE_FORMATTER);
         String key = "DailyViews:" + date.format(DATE_FORMATTER);
         log.info("key : {} ", key);
 
@@ -63,11 +64,12 @@ public class CustomJpaItemReader {
 
         log.info("Found {} items in Redis for key : {}", contentIds.size(), key);
 
-        return new JpaPagingItemReaderBuilder<UserViewLogEntity>()
+        return new JpaPagingItemReaderBuilder<CumulativeContentStatisticsEntity>()
                 .name("userViewLogReader")
                 .entityManagerFactory(entityManagerFactory)
                 //.queryString("SELECT l FROM UserViewLogEntity l WHERE l.playbackDatetime = BETWEEN :startOfDay AND :endOfDay AND l.contentPostId IN :contentIds")
-                .queryString("SELECT l FROM UserViewLogEntity l WHERE DATE(l.playbackDatetime) = :date AND l.contentPostId IN :contentIds")
+                //.queryString("SELECT l FROM UserViewLogEntity l WHERE DATE(l.playbackDatetime) = :date AND l.contentPostId IN :contentIds")
+                .queryString("SELECT c FROM CumulativeContentStatisticsEntity c WHERE c.contentPostId IN :contentIds")
                 .parameterValues(createParameterMap(date, contentIds))
                 .pageSize(10)
                 .build();
@@ -76,14 +78,14 @@ public class CustomJpaItemReader {
     private Map<String, Object> createParameterMap(LocalDateTime date, Set<Long> contentIds) {
         log.info("createParameterMap");
 
-        LocalDate localDate = LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth());
-        Date sqlDate = Date.valueOf(localDate);
-
-        log.info("date : {} ", localDate);
+//        LocalDate localDate = LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth());
+//        Date sqlDate = Date.valueOf(localDate);
+//
+//        log.info("date : {} ", localDate);
         log.info("contentIds : {} ", contentIds);
 
         Map<String, Object> parameterMap = new HashMap<>();
-        parameterMap.put("date", sqlDate);
+//        parameterMap.put("date", sqlDate);
         parameterMap.put("contentIds", contentIds);
         return parameterMap;
     }

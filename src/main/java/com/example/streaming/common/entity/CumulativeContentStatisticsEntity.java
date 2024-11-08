@@ -2,9 +2,11 @@ package com.example.streaming.common.entity;
 
 import com.example.streaming.cumulativeContentStatistics.model.CumulativeContentStatistics;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 @Table(name = "cumulative_content_statistics")
 public class CumulativeContentStatisticsEntity {
