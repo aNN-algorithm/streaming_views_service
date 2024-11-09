@@ -63,6 +63,7 @@ public class ContentPostEntity {
 
     public ContentPost toModel() {
         return ContentPost.builder()
+                .id(id)
                 .creatorId(creatorId)
                 .adId(adId)
                 .name(name)

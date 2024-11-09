@@ -8,10 +8,9 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Slf4j
 @Configuration
@@ -24,7 +23,8 @@ public class JobLauncherConfig {
     public void runDailyViewsJob() throws JobExecutionException {
         try {
             JobParameters jobParameters = new JobParametersBuilder()
-                    .addDate("date", new Date())
+                    .addString("date", LocalDate.now().toString())
+                    .addLong("run.id", System.currentTimeMillis())
                     .toJobParameters();
 
             jobLauncher.run(dailyViewsJob, jobParameters);

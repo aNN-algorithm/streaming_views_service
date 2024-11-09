@@ -21,6 +21,9 @@ public class CustomItemWriter implements ItemWriter<DailyContentStatistics> {
     public void write(Chunk<? extends DailyContentStatistics> chunk) throws Exception {
         log.info("write");
 
+        //TODO: 배치 인서트 넣고 성능 비교해볼 것
+        // Write는 한 번밖에 일어나지 않으니까 Write 전후로 시간 비교
+        // 여기서 정의해도 되고 공통 리스너에 해도 됨
         for (DailyContentStatistics dailyContentStatistics : chunk) {
             log.info("Writing item: {} {} {}", dailyContentStatistics.getContentPostId(), dailyContentStatistics.getDailyViews(), dailyContentStatistics.getDailyPlaybackTime());
             dailyContentStatisticsRepository.update(dailyContentStatistics);
