@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
@@ -22,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class WatchCacheToDBService {
 
     private final RedisTemplate<String, Object> redisTemplate;
@@ -32,6 +32,14 @@ public class WatchCacheToDBService {
     private static final int BATCH_SIZE = 1000;
 
     private final JdbcTemplate jdbcTemplate;
+
+    public WatchCacheToDBService(RedissonClient redissonClient,
+                                 JdbcTemplate jdbcTemplate,
+                                 @Qualifier("redisTemplateToCalculateViews") RedisTemplate<String, Object> redisTemplate) {
+        this.redissonClient = redissonClient;
+        this.jdbcTemplate = jdbcTemplate;
+        this.redisTemplate = redisTemplate;
+    }
 
     @Transactional
     @Scheduled(cron = "5 * * * * ?")

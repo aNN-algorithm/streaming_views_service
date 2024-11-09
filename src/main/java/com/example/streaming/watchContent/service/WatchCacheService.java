@@ -17,4 +17,6 @@ public interface WatchCacheService {
     boolean isAbusing(Long userId, Long contentPostId);
 
     void cacheAbuseDetectionData(Long userId, Long contentPostId);
+
+    void createDailyContentPostIdInRedis(Long contentPostId, LocalDateTime viewDateTime);
 }
