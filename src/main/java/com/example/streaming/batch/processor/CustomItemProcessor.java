@@ -32,7 +32,8 @@ public class CustomItemProcessor implements ItemProcessor<CumulativeContentStati
 
     @Override
     public DailyContentStatistics process(CumulativeContentStatistics item) throws Exception {
-        LocalDate localDate = LocalDate.parse(date);
+        //LocalDate localDate = LocalDate.parse(date).minusDays(1);
+        LocalDate localDate = LocalDate.parse(date).minusDays(2);
         String batchBatch = localDate.format(DATE_FORMATTER);
 
         log.info("item : {}, {}, {}", item.getContentPostId(), item.getCumulativeViews(), item.getCumulativeAdViews());

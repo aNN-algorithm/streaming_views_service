@@ -35,9 +35,9 @@ public class CumulativeContentStatisticsRepositoryImpl implements CumulativeCont
     }
 
     @Override
-    public List<CumulativeContentStatistics> findAllByIdIn(Set<Long> contentPostIds) {
+    public List<CumulativeContentStatistics> findAllByContentPostIdIn(Set<Long> contentPostIds) {
 
-        List<CumulativeContentStatisticsEntity> list = cumulativeContentStatisticsJpaRepository.findAllByIdIn(contentPostIds);
+        List<CumulativeContentStatisticsEntity> list = cumulativeContentStatisticsJpaRepository.findAllByContentPostIdIn(contentPostIds);
 
         return list.stream().map(CumulativeContentStatisticsEntity::toModel).collect(Collectors.toList());
     }

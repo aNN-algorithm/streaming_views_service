@@ -15,5 +15,5 @@ public interface CumulativeContentStatisticsJpaRepository extends JpaRepository<
     @Query(value = "SELECT c FROM CumulativeContentStatisticsEntity c WHERE c.contentPostId IN :contentPostIds ORDER BY c.id")
     Page<CumulativeContentStatisticsEntity> findAllPaging(@Param("contentPostIds") Set<Long> contentPostIds, Pageable pageable);
 
-    List<CumulativeContentStatisticsEntity> findAllByIdIn(Set<Long> contentPostIds);
+    List<CumulativeContentStatisticsEntity> findAllByContentPostIdIn(Set<Long> contentPostIds);
 }
