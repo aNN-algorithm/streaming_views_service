@@ -13,4 +13,5 @@ public interface CumulativeContentStatisticsRepository {
 
     List<CumulativeContentStatistics> findAllByContentPostIdIn(Set<Long> contentPostIds);
 
+    CumulativeContentStatistics findTop1ByContentPostId(Long contentPostId);
 }

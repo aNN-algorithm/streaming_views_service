@@ -7,27 +7,24 @@ import org.springframework.batch.core.JobExecutionException;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
-
 import org.springframework.context.annotation.Configuration;
-
-import java.time.LocalDate;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class JobLauncherConfig {
+public class CumulativeViewsJobLauncherConfig {
 
     private final JobLauncher jobLauncher;
-    private final Job dailyViewsJob;
+    private final Job cumulativeStatisticsJob;
 
-    public void runDailyViewsJob() throws JobExecutionException {
+    public void runDailyViewsJob(String date) throws JobExecutionException {
         try {
-            JobParameters jobParameters = new JobParametersBuilder()
-                    .addString("date", LocalDate.now().toString())
+            JobParameters dailyViewsJobParameters = new JobParametersBuilder()
+                    .addString("date", date)
                     .addLong("run.id", System.currentTimeMillis())
                     .toJobParameters();
 
-            jobLauncher.run(dailyViewsJob, jobParameters);
+            jobLauncher.run(cumulativeStatisticsJob, dailyViewsJobParameters);
         } catch (JobExecutionException e) {
             log.error(e.getMessage());
         }

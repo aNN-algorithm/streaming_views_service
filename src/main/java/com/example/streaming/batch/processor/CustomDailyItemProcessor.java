@@ -20,7 +20,7 @@ import java.util.List;
 @StepScope
 @Component
 @RequiredArgsConstructor
-public class CustomItemProcessor implements ItemProcessor<CumulativeContentStatistics, DailyContentStatistics> {
+public class CustomDailyItemProcessor implements ItemProcessor<CumulativeContentStatistics, DailyContentStatistics> {
 
     private final UserViewLogRepository userViewLogRepository;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -32,8 +32,8 @@ public class CustomItemProcessor implements ItemProcessor<CumulativeContentStati
 
     @Override
     public DailyContentStatistics process(CumulativeContentStatistics item) throws Exception {
-        //LocalDate localDate = LocalDate.parse(date).minusDays(1);
-        LocalDate localDate = LocalDate.parse(date).minusDays(2);
+
+        LocalDate localDate = LocalDate.parse(date);
         String batchBatch = localDate.format(DATE_FORMATTER);
 
         log.info("item : {}, {}, {}", item.getContentPostId(), item.getCumulativeViews(), item.getCumulativeAdViews());
@@ -59,13 +59,40 @@ public class CustomItemProcessor implements ItemProcessor<CumulativeContentStati
             lastId = list.getLast().getId();
         }
 
-        Long dailyRevenue = 0L;
+        Long dailyRevenue = calculateDailyRevenue(item.getCumulativeViews() + dailyViews) - item.getCumulativeRevenue();
+
         DailyContentStatistics dailyContentStatistics =
-                DailyContentStatistics.from(item.getContentPostId(), dailyViews, dailyRevenue, dailyPlaybackTime);
+                DailyContentStatistics.from(item.getContentPostId(), dailyViews, dailyRevenue, dailyPlaybackTime, localDate.format(DATE_FORMATTER));
 
         log.info("processing item: {} {} {}", dailyContentStatistics.getContentPostId(), dailyContentStatistics.getDailyViews(), dailyContentStatistics.getDailyPlaybackTime());
 
         log.info("processor end line");
         return dailyContentStatistics;
+    }
+
+    private Long calculateDailyRevenue(Long totalViews) {
+
+        Double result = 0.0;
+
+        if (totalViews < 100_000) {
+            result += totalViews;
+        } else if (totalViews < 500_000) {
+            result += 99999;
+            totalViews -= 99999;
+            result += totalViews * 1.1;
+        } else if (totalViews < 1_000_000) {
+            result += 99999;
+            result += 400_000 * 1.1;
+            result -= 499_999;
+            result += totalViews * 1.3;
+        } else {
+            result += 99999;
+            result += 400_000 * 1.1;
+            result += 500_000 * 1.3;
+            result -= 999_999;
+            result += totalViews * 1.5;
+        }
+
+        return (long) (result / 10) * 10;
     }
 }

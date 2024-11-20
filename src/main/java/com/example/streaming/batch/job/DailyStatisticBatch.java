@@ -23,7 +23,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class StatisticBatch {
+public class DailyStatisticBatch {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
@@ -32,7 +32,6 @@ public class StatisticBatch {
     private final ItemWriter<DailyContentStatistics> itemWriter;
     private final RedisIdRangePartitioner redisIdRangePartitioner;
 
-    private static final String JOB_NAME = "DailyViewsJob";
     private static final int POOL_SIZE = 5;
 
     @Bean

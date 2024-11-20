@@ -31,7 +31,7 @@ public class RedisIdRangePartitioner implements Partitioner {
     public Map<String, ExecutionContext> partition(int gridSize) {
 
         //LocalDate localDate = LocalDate.parse(date).minusDays(1);
-        LocalDate localDate = LocalDate.parse(date).minusDays(2);
+        LocalDate localDate = LocalDate.parse(date);
         String key = "DailyViews:" + localDate.format(DATE_FORMATTER);
 
         long dataSize = redisTemplateContentPostId.opsForZSet().size(key); // 1000개

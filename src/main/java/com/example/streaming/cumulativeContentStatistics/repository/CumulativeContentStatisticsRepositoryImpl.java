@@ -41,4 +41,9 @@ public class CumulativeContentStatisticsRepositoryImpl implements CumulativeCont
 
         return list.stream().map(CumulativeContentStatisticsEntity::toModel).collect(Collectors.toList());
     }
+
+    @Override
+    public CumulativeContentStatistics findTop1ByContentPostId(Long contentPostId) {
+        return cumulativeContentStatisticsJpaRepository.findTop1ByContentPostId(contentPostId).get().toModel();
+    }
 }

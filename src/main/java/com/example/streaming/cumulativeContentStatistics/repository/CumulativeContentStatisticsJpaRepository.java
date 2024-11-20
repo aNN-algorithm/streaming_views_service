@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface CumulativeContentStatisticsJpaRepository extends JpaRepository<CumulativeContentStatisticsEntity, Long> {
@@ -16,4 +17,6 @@ public interface CumulativeContentStatisticsJpaRepository extends JpaRepository<
     Page<CumulativeContentStatisticsEntity> findAllPaging(@Param("contentPostIds") Set<Long> contentPostIds, Pageable pageable);
 
     List<CumulativeContentStatisticsEntity> findAllByContentPostIdIn(Set<Long> contentPostIds);
+
+    Optional<CumulativeContentStatisticsEntity> findTop1ByContentPostId(Long contentPostId);
 }

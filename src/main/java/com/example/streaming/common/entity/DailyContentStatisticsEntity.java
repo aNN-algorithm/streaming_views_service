@@ -3,7 +3,7 @@ package com.example.streaming.common.entity;
 import com.example.streaming.dailyContentStatistics.model.DailyContentStatistics;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "daily_statistics")
@@ -32,7 +32,7 @@ public class DailyContentStatisticsEntity {
     private Long dailyPlaybackTime;
 
     @Column(name = "date", nullable = false)
-    private LocalDateTime date;
+    private LocalDate date;
 
     public static DailyContentStatisticsEntity from(DailyContentStatistics dailyContentStatistics) {
         DailyContentStatisticsEntity dailyContentStatisticsEntity = new DailyContentStatisticsEntity();
@@ -44,5 +44,18 @@ public class DailyContentStatisticsEntity {
         dailyContentStatisticsEntity.dailyPlaybackTime = dailyContentStatistics.getDailyPlaybackTime();
         dailyContentStatisticsEntity.date = dailyContentStatistics.getDate();
         return dailyContentStatisticsEntity;
+    }
+
+    public DailyContentStatistics toModel() {
+        return DailyContentStatistics.builder()
+                .id(id)
+                .contentPostId(contentPostId)
+                .dailyViews(dailyViews)
+                .dailyAdViews(dailyAdViews)
+                .dailyRevenue(dailyRevenue)
+                .dailyAdRevenue(dailyAdRevenue)
+                .dailyPlaybackTime(dailyPlaybackTime)
+                .date(date)
+                .build();
     }
 }

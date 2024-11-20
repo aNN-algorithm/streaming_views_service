@@ -1,7 +1,5 @@
 package com.example.streaming.batch.writer;
 
-import com.example.streaming.common.entity.DailyContentStatisticsEntity;
-import com.example.streaming.common.entity.UserViewLogEntity;
 import com.example.streaming.dailyContentStatistics.model.DailyContentStatistics;
 import com.example.streaming.dailyContentStatistics.respository.DailyContentStatisticsRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CustomItemWriter implements ItemWriter<DailyContentStatistics> {
+public class CustomDailyItemWriter implements ItemWriter<DailyContentStatistics> {
 
     private final DailyContentStatisticsRepository dailyContentStatisticsRepository;
 

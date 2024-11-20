@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @StepScope
 @Component
 @RequiredArgsConstructor
-public class CustomItemReader implements ItemReader<CumulativeContentStatistics> {
+public class CustomDailyItemReader implements ItemReader<CumulativeContentStatistics> {
 
     private final RedisTemplate<String, Object> redisTemplateContentPostId;
     private final CumulativeContentStatisticsRepository cumulativeContentStatisticsRepository;
@@ -70,8 +70,7 @@ public class CustomItemReader implements ItemReader<CumulativeContentStatistics>
 
     private void loadNextPageFromRedisAndDB() {
         // Redis에서 지정된 페이지의 데이터를 가져옴
-        //LocalDate localDate = LocalDate.parse(date).minusDays(1);
-        LocalDate localDate = LocalDate.parse(date).minusDays(2);
+        LocalDate localDate = LocalDate.parse(date);
         String key = "DailyViews:" + localDate.format(DATE_FORMATTER);
         log.info("Fetching contentPostIds from Redis for key: {}", key);
 
@@ -102,9 +101,6 @@ public class CustomItemReader implements ItemReader<CumulativeContentStatistics>
         // DB에서 Redis에서 가져온 contentPostIds에 해당하는 데이터 조회
         List<CumulativeContentStatistics> pagingList = cumulativeContentStatisticsRepository.findAllByContentPostIdIn(contentPostIds);
         log.info("pagingList size: {}", pagingList.size());
-        for (CumulativeContentStatistics cumulativeContentStatistics : pagingList) {
-            log.info("contentPostIds : {}, 누적테이블 content post id : {}", contentPostIds, cumulativeContentStatistics.getContentPostId());
-        }
 
         if (pagingList != null && !pagingList.isEmpty()) {
             currentList.addAll(pagingList); // 조회 결과를 currentList에 저장
