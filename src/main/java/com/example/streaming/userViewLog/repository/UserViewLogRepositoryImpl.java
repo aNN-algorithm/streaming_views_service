@@ -22,7 +22,7 @@ public class UserViewLogRepositoryImpl implements UserViewLogRepository {
     public List<UserViewLogEntity> findLogByIdAndDate(Long contentPostId, Long lastId, PageRequest pageable, String date) {
 //        String date = LocalDate.now().minusDays(1).format(DATE_FORMATTER);
 
-        log.info("date : {} ", date);
+        //log.info("date : {} ", date);
 
 //        List<UserViewLogEntity> list = userViewLogJpaRepository.findByContentPostIdAndPlaybackDatetime(
 //                contentPostId,

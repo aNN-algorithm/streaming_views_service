@@ -20,6 +20,9 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.time.Duration;
+import java.time.Instant;
+
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
@@ -42,6 +45,22 @@ public class DailyStatisticBatch {
 
         return new JobBuilder("DailyViewsJob", jobRepository)
                 .start(dailyViewsPartitionStep()) // PartitionStep 생성
+                .listener(new JobExecutionListener() {
+                    private Instant jobStartTime;
+
+                    @Override
+                    public void beforeJob(JobExecution jobExecution) {
+                        jobStartTime = Instant.now();
+                        log.info("Job started: {}", jobExecution.getJobInstance().getJobName());
+                    }
+
+                    @Override
+                    public void afterJob(JobExecution jobExecution) {
+                        Instant jobEndTime = Instant.now();
+                        Duration jobDuration = Duration.between(jobStartTime, jobEndTime);
+                        log.info("Job completed: {}, duration: {} hours, {} minutes, {} seconds", jobExecution.getJobInstance().getJobName(), jobDuration.toHours(), jobDuration.toMinutesPart(), jobDuration.toSecondsPart());
+                    }
+                })
                 .build();
     }
 
@@ -113,6 +132,26 @@ public class DailyStatisticBatch {
                                 stepExecution.getReadCount(),
                                 stepExecution.getWriteCount());
                         return stepExecution.getExitStatus();
+                    }
+                })
+                .listener(new ItemProcessListener<CumulativeContentStatistics, DailyContentStatistics>() {
+                    private Instant startTime;
+
+                    @Override
+                    public void beforeProcess(CumulativeContentStatistics item) {
+                        startTime = Instant.now();  // 아이템 처리 시작 시간 기록
+                    }
+
+                    @Override
+                    public void afterProcess(CumulativeContentStatistics item, DailyContentStatistics result) {
+                        Instant endTime = Instant.now();
+                        Duration processingDuration = Duration.between(startTime, endTime);
+                        log.info("Item processed in {} hours, {} minutes, {} seconds, {} milliseconds", processingDuration.toHours(), processingDuration.toMinutesPart(), processingDuration.toSecondsPart(), processingDuration.toMillisPart());  // 처리 시간 로그
+                    }
+
+                    @Override
+                    public void onProcessError(CumulativeContentStatistics item, Exception e) {
+                        log.error("Processing error for item with id: {}", item.getId(), e);
                     }
                 })
                 .build();

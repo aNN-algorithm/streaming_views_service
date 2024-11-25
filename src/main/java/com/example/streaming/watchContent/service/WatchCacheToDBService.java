@@ -121,51 +121,51 @@ public class WatchCacheToDBService {
         });
     }
 
-    @Transactional
-    @Scheduled(cron = "0 0 * * * *")
-    public void transferCacheToDailyViewsDBEveryHour() {
-        log.info("Hello, schedule to transfer cache to DB");
-
-        LocalDateTime localDate = LocalDateTime.now();
-
-        String key = "DailyViews:" + DATE_FORMATTER.format(localDate);
-        Set<Object> redisData = redisTemplateContentPostId.opsForZSet().range(key, 0, -1);
-
-        saveToDailyViewsDB(redisData, LocalDate.from(localDate));
-        deleteDailyViewsDB(key);
-    }
-
-    public void saveToDailyViewsDB(Set<Object> batch, LocalDate date) {
-
-        log.info("start to save to db");
-        String sql = "INSERT INTO daily_views_content (content_post_id, date) VALUES (?, ?)";
-
-        List<Object[]> batchArgs = new ArrayList<>();
-
-        // 각 레코드 추가하기
-        for (Object contentPostId : batch) {
-            if (contentPostId instanceof Long) {
-                batchArgs.add(new Object[]{contentPostId, date});
-                log.info("Adding to batch - contentPostId = {}, date = {}", contentPostId, date);
-            } else {
-                log.warn("Skipping invalid contentPostId: {}", contentPostId);
-            }
-        }
-
-        if (batchArgs.isEmpty()) {
-            log.info("No valid entries to insert into DB");
-            return;
-        }
-
-        jdbcTemplate.batchUpdate(sql, batchArgs);
-    }
-
-    public void deleteDailyViewsDB(String key) {
-        Boolean result = redisTemplateContentPostId.delete(key);
-        if (Boolean.TRUE.equals(result)) {
-            log.info("Successfully deleted Redis key: {}", key);
-        } else {
-            log.warn("Failed to delete Redis key or key did not exist: {}", key);
-        }
-    }
+//    @Transactional
+//    @Scheduled(cron = "0 0 * * * *")
+//    public void transferCacheToDailyViewsDBEveryHour() {
+//        log.info("Hello, schedule to transfer cache to DB");
+//
+//        LocalDateTime localDate = LocalDateTime.now();
+//
+//        String key = "DailyViews:" + DATE_FORMATTER.format(localDate);
+//        Set<Object> redisData = redisTemplateContentPostId.opsForZSet().range(key, 0, -1);
+//
+//        saveToDailyViewsDB(redisData, LocalDate.from(localDate));
+//        deleteDailyViewsDB(key);
+//    }
+//
+//    public void saveToDailyViewsDB(Set<Object> batch, LocalDate date) {
+//
+//        log.info("start to save to db");
+//        String sql = "INSERT INTO daily_views_content (content_post_id, date) VALUES (?, ?)";
+//
+//        List<Object[]> batchArgs = new ArrayList<>();
+//
+//        // 각 레코드 추가하기
+//        for (Object contentPostId : batch) {
+//            if (contentPostId instanceof Long) {
+//                batchArgs.add(new Object[]{contentPostId, date});
+//                log.info("Adding to batch - contentPostId = {}, date = {}", contentPostId, date);
+//            } else {
+//                log.warn("Skipping invalid contentPostId: {}", contentPostId);
+//            }
+//        }
+//
+//        if (batchArgs.isEmpty()) {
+//            log.info("No valid entries to insert into DB");
+//            return;
+//        }
+//
+//        jdbcTemplate.batchUpdate(sql, batchArgs);
+//    }
+//
+//    public void deleteDailyViewsDB(String key) {
+//        Boolean result = redisTemplateContentPostId.delete(key);
+//        if (Boolean.TRUE.equals(result)) {
+//            log.info("Successfully deleted Redis key: {}", key);
+//        } else {
+//            log.warn("Failed to delete Redis key or key did not exist: {}", key);
+//        }
+//    }
 }

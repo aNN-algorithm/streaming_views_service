@@ -38,7 +38,7 @@ public class CustomCumulativeItemReader implements ItemReader<DailyContentStatis
     private boolean hasNextPage = true;
 
     private int redisPage = 0;  // Redis 페이지 인덱스
-    private static final int CHUNK_SIZE = 10;  // 청크 크기 설정
+    private static final int CHUNK_SIZE = 1000;  // 청크 크기 설정
 
     @Value("#{jobParameters['date']}")
     private String date;

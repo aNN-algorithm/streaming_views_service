@@ -25,7 +25,7 @@ public class CustomDailyItemProcessor implements ItemProcessor<CumulativeContent
     private final UserViewLogRepository userViewLogRepository;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    int pageSize = 3;
+    int pageSize = 1000;
 
     @Value("#{jobParameters['date']}")
     private String date;
@@ -50,8 +50,8 @@ public class CustomDailyItemProcessor implements ItemProcessor<CumulativeContent
                 break;
             }
 
+            log.info("start processing 현재 item id : {}}", item.getContentPostId());
             for (UserViewLogEntity userViewLog : list) {
-                log.info("현재 item id : {}, log id : {}, user id : {}, playbackTime: {}", item.getContentPostId(), userViewLog.getId(), userViewLog.getUserId(), userViewLog.getTotalPlaybackTime());
                 dailyViews += 1; // 각 로그를 한 번의 조회로 간주할 경우, 또는 log.getViewCount()로 조회 수 합산
                 dailyPlaybackTime += userViewLog.getTotalPlaybackTime(); // 각 로그의 재생 시간을 합산
             }

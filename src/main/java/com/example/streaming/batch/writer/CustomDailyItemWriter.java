@@ -17,7 +17,6 @@ public class CustomDailyItemWriter implements ItemWriter<DailyContentStatistics>
 
     @Override
     public void write(Chunk<? extends DailyContentStatistics> chunk) throws Exception {
-        log.info("write");
 
         //TODO: 배치 인서트 넣고 성능 비교해볼 것
         // Write는 한 번밖에 일어나지 않으니까 Write 전후로 시간 비교
