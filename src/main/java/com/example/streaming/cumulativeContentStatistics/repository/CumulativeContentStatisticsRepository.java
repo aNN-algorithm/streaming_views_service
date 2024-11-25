@@ -11,6 +11,7 @@ public interface CumulativeContentStatisticsRepository {
 
     List<CumulativeContentStatistics> findAllPaging(Set<Long> contentPostIds, int currentPage, int pageSize);
 
-    List<CumulativeContentStatistics> findAllByIdIn(Set<Long> contentPostIds);
+    List<CumulativeContentStatistics> findAllByContentPostIdIn(Set<Long> contentPostIds);
 
+    CumulativeContentStatistics findTop1ByContentPostId(Long contentPostId);
 }

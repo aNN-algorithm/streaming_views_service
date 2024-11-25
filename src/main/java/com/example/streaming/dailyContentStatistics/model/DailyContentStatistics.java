@@ -1,10 +1,9 @@
 package com.example.streaming.dailyContentStatistics.model;
 
-import com.example.streaming.watchContent.model.UserViewLog;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 public class DailyContentStatistics {
@@ -18,7 +17,7 @@ public class DailyContentStatistics {
     private Long dailyRevenue;
     private Long dailyAdRevenue;
     private Long dailyPlaybackTime;
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Builder
     public DailyContentStatistics(
@@ -29,7 +28,7 @@ public class DailyContentStatistics {
             Long dailyRevenue,
             Long dailyAdRevenue,
             Long dailyPlaybackTime,
-            LocalDateTime date
+            LocalDate date
     ) {
         this.id = id;
         this.contentPostId = contentPostId;
@@ -45,7 +44,8 @@ public class DailyContentStatistics {
     public static DailyContentStatistics from(Long contentPostId,
                                               Long dailyViews,
                                               Long dailyRevenue,
-                                              Long dailyPlaybackTime
+                                              Long dailyPlaybackTime,
+                                              String date
     ) {
         return DailyContentStatistics.builder()
                 .contentPostId(contentPostId)
@@ -54,7 +54,7 @@ public class DailyContentStatistics {
                 .dailyRevenue(dailyRevenue)
                 .dailyAdRevenue(INITIAL_VALUE)
                 .dailyPlaybackTime(dailyPlaybackTime)
-                .date(LocalDateTime.now())
+                .date(LocalDate.parse(date))
                 .build();
     }
 }

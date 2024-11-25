@@ -20,18 +20,19 @@ import java.util.List;
 @StepScope
 @Component
 @RequiredArgsConstructor
-public class CustomItemProcessor implements ItemProcessor<CumulativeContentStatistics, DailyContentStatistics> {
+public class CustomDailyItemProcessor implements ItemProcessor<CumulativeContentStatistics, DailyContentStatistics> {
 
     private final UserViewLogRepository userViewLogRepository;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    int pageSize = 3;
+    int pageSize = 1000;
 
     @Value("#{jobParameters['date']}")
     private String date;
 
     @Override
     public DailyContentStatistics process(CumulativeContentStatistics item) throws Exception {
+
         LocalDate localDate = LocalDate.parse(date);
         String batchBatch = localDate.format(DATE_FORMATTER);
 
@@ -49,8 +50,8 @@ public class CustomItemProcessor implements ItemProcessor<CumulativeContentStati
                 break;
             }
 
+            log.info("start processing 현재 item id : {}}", item.getContentPostId());
             for (UserViewLogEntity userViewLog : list) {
-                log.info("현재 item id : {}, log id : {}, user id : {}, playbackTime: {}", item.getContentPostId(), userViewLog.getId(), userViewLog.getUserId(), userViewLog.getTotalPlaybackTime());
                 dailyViews += 1; // 각 로그를 한 번의 조회로 간주할 경우, 또는 log.getViewCount()로 조회 수 합산
                 dailyPlaybackTime += userViewLog.getTotalPlaybackTime(); // 각 로그의 재생 시간을 합산
             }
@@ -58,13 +59,40 @@ public class CustomItemProcessor implements ItemProcessor<CumulativeContentStati
             lastId = list.getLast().getId();
         }
 
-        Long dailyRevenue = 0L;
+        Long dailyRevenue = calculateDailyRevenue(item.getCumulativeViews() + dailyViews) - item.getCumulativeRevenue();
+
         DailyContentStatistics dailyContentStatistics =
-                DailyContentStatistics.from(item.getContentPostId(), dailyViews, dailyRevenue, dailyPlaybackTime);
+                DailyContentStatistics.from(item.getContentPostId(), dailyViews, dailyRevenue, dailyPlaybackTime, localDate.format(DATE_FORMATTER));
 
         log.info("processing item: {} {} {}", dailyContentStatistics.getContentPostId(), dailyContentStatistics.getDailyViews(), dailyContentStatistics.getDailyPlaybackTime());
 
         log.info("processor end line");
         return dailyContentStatistics;
+    }
+
+    private Long calculateDailyRevenue(Long totalViews) {
+
+        Double result = 0.0;
+
+        if (totalViews < 100_000) {
+            result += totalViews;
+        } else if (totalViews < 500_000) {
+            result += 99999;
+            totalViews -= 99999;
+            result += totalViews * 1.1;
+        } else if (totalViews < 1_000_000) {
+            result += 99999;
+            result += 400_000 * 1.1;
+            result -= 499_999;
+            result += totalViews * 1.3;
+        } else {
+            result += 99999;
+            result += 400_000 * 1.1;
+            result += 500_000 * 1.3;
+            result -= 999_999;
+            result += totalViews * 1.5;
+        }
+
+        return (long) (result / 10) * 10;
     }
 }

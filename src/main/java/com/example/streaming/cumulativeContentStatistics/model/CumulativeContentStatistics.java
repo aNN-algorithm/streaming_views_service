@@ -51,4 +51,25 @@ public class CumulativeContentStatistics {
                 .updatedAt(LocalDateTime.now())
                 .build();
     }
+
+    public static CumulativeContentStatistics from(Long id,
+                                                   Long contentPostId,
+                                                   Long cumulativeViews,
+                                                   Long cumulativeAdViews,
+                                                   Long cumulativeRevenue,
+                                                   Long cumulativeAdRevenue,
+                                                   Long cumulativePlaybackTime,
+                                                   LocalDateTime updatedAt
+    ) {
+        return CumulativeContentStatistics.builder()
+                .id(id)
+                .contentPostId(contentPostId)
+                .cumulativeViews(cumulativeViews)
+                .cumulativeAdViews(cumulativeAdViews)
+                .cumulativeRevenue(cumulativeRevenue)
+                .cumulativeAdRevenue(cumulativeAdRevenue)
+                .cumulativePlaybackTime(cumulativePlaybackTime)
+                .updatedAt(updatedAt)
+                .build();
+    }
 }

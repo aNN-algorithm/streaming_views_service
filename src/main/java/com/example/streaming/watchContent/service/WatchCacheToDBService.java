@@ -1,7 +1,6 @@
 package com.example.streaming.watchContent.service;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -13,12 +12,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -29,21 +29,24 @@ public class WatchCacheToDBService {
     private final RedissonClient redissonClient;
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final int BATCH_SIZE = 1000;
 
     private final JdbcTemplate jdbcTemplate;
+    private final RedisTemplate redisTemplateContentPostId;
 
     public WatchCacheToDBService(RedissonClient redissonClient,
                                  JdbcTemplate jdbcTemplate,
-                                 @Qualifier("redisTemplateToCalculateViews") RedisTemplate<String, Object> redisTemplate) {
+                                 @Qualifier("redisTemplateToCalculateViews") RedisTemplate<String, Object> redisTemplate, @Qualifier("redisTemplateContentPostId") RedisTemplate redisTemplateContentPostId) {
         this.redissonClient = redissonClient;
         this.jdbcTemplate = jdbcTemplate;
         this.redisTemplate = redisTemplate;
+        this.redisTemplateContentPostId = redisTemplateContentPostId;
     }
 
     @Transactional
     @Scheduled(cron = "5 * * * * ?")
-    public void transferCacheToDBEveryMinute() {
+    public void transferCacheToUserViewLogDBEveryMinute() {
         log.info("Hello, schedule to transfer cache to DB");
 
         LocalDateTime oneMinuteAgo = LocalDateTime.now().minusMinutes(1);
@@ -73,8 +76,8 @@ public class WatchCacheToDBService {
                     for (int i = 0; i < BATCH_SIZE && cursor.hasNext(); i++) {
                         batch.add(cursor.next());
                     }
-                    saveToDB(batch);
-                    deleteDataInCache(batch, oneMinuteAgo);
+                    saveToUserViewLogDB(batch);
+                    deleteUserViewLogInCache(batch, oneMinuteAgo);
                 }
             }
         } catch (InterruptedException e) {
@@ -89,7 +92,7 @@ public class WatchCacheToDBService {
         log.info("end to transfer cache to DB");
     }
 
-    public void saveToDB(List<Map.Entry<Object, Object>> batch) {
+    public void saveToUserViewLogDB(List<Map.Entry<Object, Object>> batch) {
 
         log.info("start to save to db");
         String sql = "UPDATE content_post SET total_views = total_views + ? WHERE id = ?";
@@ -103,7 +106,7 @@ public class WatchCacheToDBService {
         jdbcTemplate.batchUpdate(sql, batchArgs);
     }
 
-    public void deleteDataInCache(List<Map.Entry<Object, Object>> batch, LocalDateTime oneMinuteAgo) {
+    public void deleteUserViewLogInCache(List<Map.Entry<Object, Object>> batch, LocalDateTime oneMinuteAgo) {
 
         log.info("start to delete data in cache");
         batch.forEach(entry -> {
@@ -117,4 +120,52 @@ public class WatchCacheToDBService {
             }
         });
     }
+
+//    @Transactional
+//    @Scheduled(cron = "0 0 * * * *")
+//    public void transferCacheToDailyViewsDBEveryHour() {
+//        log.info("Hello, schedule to transfer cache to DB");
+//
+//        LocalDateTime localDate = LocalDateTime.now();
+//
+//        String key = "DailyViews:" + DATE_FORMATTER.format(localDate);
+//        Set<Object> redisData = redisTemplateContentPostId.opsForZSet().range(key, 0, -1);
+//
+//        saveToDailyViewsDB(redisData, LocalDate.from(localDate));
+//        deleteDailyViewsDB(key);
+//    }
+//
+//    public void saveToDailyViewsDB(Set<Object> batch, LocalDate date) {
+//
+//        log.info("start to save to db");
+//        String sql = "INSERT INTO daily_views_content (content_post_id, date) VALUES (?, ?)";
+//
+//        List<Object[]> batchArgs = new ArrayList<>();
+//
+//        // 각 레코드 추가하기
+//        for (Object contentPostId : batch) {
+//            if (contentPostId instanceof Long) {
+//                batchArgs.add(new Object[]{contentPostId, date});
+//                log.info("Adding to batch - contentPostId = {}, date = {}", contentPostId, date);
+//            } else {
+//                log.warn("Skipping invalid contentPostId: {}", contentPostId);
+//            }
+//        }
+//
+//        if (batchArgs.isEmpty()) {
+//            log.info("No valid entries to insert into DB");
+//            return;
+//        }
+//
+//        jdbcTemplate.batchUpdate(sql, batchArgs);
+//    }
+//
+//    public void deleteDailyViewsDB(String key) {
+//        Boolean result = redisTemplateContentPostId.delete(key);
+//        if (Boolean.TRUE.equals(result)) {
+//            log.info("Successfully deleted Redis key: {}", key);
+//        } else {
+//            log.warn("Failed to delete Redis key or key did not exist: {}", key);
+//        }
+//    }
 }

@@ -89,7 +89,6 @@ public class WatchCacheServiceImpl implements WatchCacheService {
     @Override
     public void createDailyContentPostIdInRedis(Long contentPostId, LocalDateTime viewDateTime) {
         String key = "DailyViews:" + viewDateTime.format(DATE_FORMATTER);
-        //redisTemplateContentPostId.opsForSet().add(key, contentPostId);
         double score = contentPostId.doubleValue();
         redisTemplateContentPostId.opsForZSet().add(key, contentPostId, score);
         log.info("ContentPost Id {} added to list for date {} in Redis", contentPostId, viewDateTime.format(DATE_TIME_FORMATTER));

@@ -22,28 +22,37 @@ import java.util.stream.Collectors;
 @StepScope
 @Component
 @RequiredArgsConstructor
-public class CustomItemReader implements ItemReader<CumulativeContentStatistics> {
+public class CustomDailyItemReader implements ItemReader<CumulativeContentStatistics> {
+
+    private final RedisTemplate<String, Object> redisTemplateContentPostId;
+    private final CumulativeContentStatisticsRepository cumulativeContentStatisticsRepository;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     LinkedList<CumulativeContentStatistics> currentList = new LinkedList<>();
     Set<Long> contentPostIds = new HashSet<>();
-    private int currentPage = 0;
-    private final int pageSize = 3;
+
+    private long cursor = 0L;
+    private long chunkSize = 1000;
     private boolean hasNextPage = true;
-
-    private int redisPage = 0; // Redis의 현재 페이지를 나타내는 변수
-    private final int redisPageSize = 3; // Redis에서 가져올 페이지 크기
-    private boolean hasNextRedisPage = true;
-
-    private final RedisTemplate<String, Object> redisTemplateContentPostId;
-    private final CumulativeContentStatisticsRepository cumulativeContentStatisticsRepository;
 
     @Value("#{jobParameters['date']}")
     private String date;
 
+    @Value("#{stepExecutionContext['start']}")
+    private Long start;
+
+    @Value("#{stepExecutionContext['end']}")
+    private Long end;
+
     @Override
     public CumulativeContentStatistics read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+
+        if (start == 0 && end == -1) {
+            log.info("No data in this range, start : {}, end : {}", start, end);
+            return null;
+        }
+
         // currentList가 비어있다면 Redis에서 새 페이지 데이터를 가져오고 DB에서 조회
         if (currentList.isEmpty() && hasNextPage) {
             loadNextPageFromRedisAndDB();
@@ -64,13 +73,20 @@ public class CustomItemReader implements ItemReader<CumulativeContentStatistics>
         String key = "DailyViews:" + localDate.format(DATE_FORMATTER);
         log.info("Fetching contentPostIds from Redis for key: {}", key);
 
+        cursor = start + chunkSize;
+        if (cursor > end) {
+            cursor = end;
+        }
+        log.info("start : {}, cursor : {}, end : {}", start, cursor, end);
         Set<Object> redisData = redisTemplateContentPostId.opsForZSet()
-                .range(key, redisPage * redisPageSize, (redisPage + 1) * redisPageSize - 1);
+                .range(key, start, cursor);
+        start = start + chunkSize + 1;
 
-        if (redisData == null || redisData.isEmpty()) {
-            log.info("No more data found in Redis for key: {}", key);
+        log.info("redis data size: {}, ids : {}", redisData.size(), redisData);
+
+        //TODO: 커서로 가져올 때 커서가 엔드보다 크거나 같아지면, 다 가져온 것
+        if (redisData == null || cursor >= end) {
             hasNextPage = false;
-            return;
         }
 
         // Redis에서 가져온 데이터를 contentPostIds에 추가
@@ -82,13 +98,12 @@ public class CustomItemReader implements ItemReader<CumulativeContentStatistics>
         log.info("Found {} items in Redis for key: {}", contentPostIds.size(), key);
 
         // DB에서 Redis에서 가져온 contentPostIds에 해당하는 데이터 조회
-        List<CumulativeContentStatistics> pagingList = cumulativeContentStatisticsRepository.findAllByIdIn(contentPostIds);
+        List<CumulativeContentStatistics> pagingList = cumulativeContentStatisticsRepository.findAllByContentPostIdIn(contentPostIds);
+        log.info("pagingList size: {}", pagingList.size());
 
         if (pagingList != null && !pagingList.isEmpty()) {
             currentList.addAll(pagingList); // 조회 결과를 currentList에 저장
         }
-
-        redisPage++; // 다음 Redis 페이지로 이동
     }
 
 }
