@@ -18,8 +18,8 @@ public interface UserViewLogJpaRepository extends JpaRepository<UserViewLogEntit
     @Query("SELECT e FROM UserViewLogEntity e " +
             "WHERE e.contentPostId = :contentPostId " +
             "AND FUNCTION('DATE', e.playbackDatetime) = :date " +
-            "AND e.id > :lastId " +
-            "ORDER BY e.id ASC")
+            "AND e.id > :lastId ")
+            //"ORDER BY e.id ASC")
     List<UserViewLogEntity> findByContentPostIdAndPlaybackDatetimeAfterId(
             @Param("contentPostId") Long contentPostId,
             @Param("date") String date,
