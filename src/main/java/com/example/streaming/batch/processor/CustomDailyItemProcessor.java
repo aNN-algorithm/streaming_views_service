@@ -11,6 +11,8 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -31,12 +33,13 @@ public class CustomDailyItemProcessor implements ItemProcessor<CumulativeContent
     private String date;
 
     @Override
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public DailyContentStatistics process(CumulativeContentStatistics item) throws Exception {
 
         LocalDate localDate = LocalDate.parse(date);
         String batchBatch = localDate.format(DATE_FORMATTER);
 
-        log.info("item : {}, {}, {}", item.getContentPostId(), item.getCumulativeViews(), item.getCumulativeAdViews());
+        //log.info("item : {}, {}, {}", item.getContentPostId(), item.getCumulativeViews(), item.getCumulativeAdViews());
         Long lastId = 0L;
         Long dailyViews = 0L;
         Long dailyPlaybackTime = 0L;
@@ -46,14 +49,13 @@ public class CustomDailyItemProcessor implements ItemProcessor<CumulativeContent
             PageRequest pageable = PageRequest.of(0, pageSize);
             List<UserViewLogEntity> list = userViewLogRepository.findLogByIdAndDate(item.getContentPostId(), lastId, pageable, batchBatch);
 
-            if (list.isEmpty()) {
-                break;
-            }
-
-            log.info("start processing 현재 item id : {}}", item.getContentPostId());
             for (UserViewLogEntity userViewLog : list) {
                 dailyViews += 1; // 각 로그를 한 번의 조회로 간주할 경우, 또는 log.getViewCount()로 조회 수 합산
                 dailyPlaybackTime += userViewLog.getTotalPlaybackTime(); // 각 로그의 재생 시간을 합산
+            }
+
+            if (list.isEmpty() || list.size() < pageSize) {
+                break;
             }
 
             lastId = list.getLast().getId();
@@ -66,7 +68,6 @@ public class CustomDailyItemProcessor implements ItemProcessor<CumulativeContent
 
         log.info("processing item: {} {} {}", dailyContentStatistics.getContentPostId(), dailyContentStatistics.getDailyViews(), dailyContentStatistics.getDailyPlaybackTime());
 
-        log.info("processor end line");
         return dailyContentStatistics;
     }
 

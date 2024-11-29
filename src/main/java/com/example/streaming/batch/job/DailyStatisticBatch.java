@@ -36,6 +36,7 @@ public class DailyStatisticBatch {
     private final RedisIdRangePartitioner redisIdRangePartitioner;
 
     private static final int POOL_SIZE = 5;
+    private static final int CHUNK_SIZE = 1000;
 
     @Bean
     public Job dailyViewsJob() {
@@ -98,7 +99,7 @@ public class DailyStatisticBatch {
         log.info("create step : DailyViewsStep");
 
         return new StepBuilder("DailyViewsStep", jobRepository)
-                .<CumulativeContentStatistics, DailyContentStatistics>chunk(3, platformTransactionManager)
+                .<CumulativeContentStatistics, DailyContentStatistics>chunk(CHUNK_SIZE, platformTransactionManager)
                 .reader(itemReader)
                 .processor(itemProcessor)
                 .writer(itemWriter)
